@@ -6,18 +6,18 @@ const usersRouter = express.Router();
 
 // 로컬에서 로그인 localhost:4000/auth/login
 usersRouter.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
+  passport.authenticate("local", (error, user, info) => {
+    if (error) {
+      return next(error);
     }
 
     if (!user) {
       return res.json({ msg: info });
     }
 
-    req.logIn(user, function (err) {
-      if (err) {
-        return next(err);
+    req.logIn(user, function (error) {
+      if (error) {
+        return next(error);
       }
       res.redirect("/");
     });
@@ -26,9 +26,9 @@ usersRouter.post("/login", (req, res, next) => {
 
 // 로그아웃 localhost:4000/auth/logout
 usersRouter.post("/logout", (req, res, next) => {
-  req.logOut(function (err) {
-    if (err) {
-      return next(err);
+  req.logOut(function (error) {
+    if (error) {
+      return next(error);
     }
     res.redirect("/login");
   });
@@ -41,7 +41,7 @@ usersRouter.post("/signup", async (req, res) => {
 
   try {
     await user.save();
-    sendMail("johnahn@example.com", "John Ahn", "welcome"); // 이메일 보내기
+    // sendMail("johnahn@example.com", "John Ahn", "welcome"); // 이메일 보내기
     res.redirect("/login");
   } catch (error) {
     console.error(error);

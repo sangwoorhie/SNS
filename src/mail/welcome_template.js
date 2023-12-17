@@ -1,5 +1,5 @@
 const welcome = (data) => {
-    return `    
+  return `    
     <!DOCTYPE html>
     <html>
         <head>
@@ -10,7 +10,7 @@ const welcome = (data) => {
             <div>감사합니다.</div>
         </body>
     </html>
-    `
-}
+    `;
+};
 
 module.exports = welcome;

@@ -16,7 +16,6 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-// LocalStrategy
 const localStrategyConfig = new LocalStrategy(
   { usernameField: "email", passwordField: "password" },
   (email, password, done) => {
@@ -24,14 +23,14 @@ const localStrategyConfig = new LocalStrategy(
       {
         email: email.toLocaleLowerCase(),
       },
-      (err, user) => {
-        if (err) return done(err);
+      (error, user) => {
+        if (error) return done(error);
         if (!user) {
           return done(null, false, { msg: `Email ${email} not found` });
         }
 
-        user.comparePassword(password, (err, isMatch) => {
-          if (err) return done(err);
+        user.comparePassword(password, (error, isMatch) => {
+          if (error) return done(error);
 
           if (isMatch) {
             return done(null, user);
@@ -45,7 +44,6 @@ const localStrategyConfig = new LocalStrategy(
 );
 passport.use("local", localStrategyConfig);
 
-// GoogleStrategy
 const googleStrategyConfig = new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -54,9 +52,9 @@ const googleStrategyConfig = new GoogleStrategy(
     scope: ["email", "profile"],
   },
   (accessToken, refreshToken, profile, done) => {
-    User.findOne({ googleId: profile.id }, (err, existingUser) => {
-      if (err) {
-        return done(err);
+    User.findOne({ googleId: profile.id }, (error, existingUser) => {
+      if (error) {
+        return done(error);
       }
 
       if (existingUser) {
@@ -65,10 +63,13 @@ const googleStrategyConfig = new GoogleStrategy(
         const user = new User();
         user.email = profile.emails[0].value;
         user.googleId = profile.id;
-        user.save((err) => {
-          console.log(err);
-          if (err) {
-            return done(err);
+        user.username = profile.displayName;
+        user.firstName = profile.name.givenName;
+        user.lastName = profile.name.familyName;
+        user.save((error) => {
+          console.log(error);
+          if (error) {
+            return done(error);
           }
           done(null, user);
         });
@@ -86,9 +87,9 @@ const kakaoStrategyConfig = new KakaoStrategy(
     callbackURL: "/auth/kakao/callback",
   },
   (accessToken, refreshToken, profile, done) => {
-    User.findOne({ kakaoId: profile.id }, (err, existingUser) => {
-      if (err) {
-        return done(err);
+    User.findOne({ kakaoId: profile.id }, (error, existingUser) => {
+      if (error) {
+        return done(error);
       }
       if (existingUser) {
         return done(null, existingUser);
@@ -96,9 +97,9 @@ const kakaoStrategyConfig = new KakaoStrategy(
         const user = new User();
         user.kakaoId = profile.id;
         user.email = profile._json.kakao_account.email;
-        user.save((err) => {
-          if (err) {
-            return done(err);
+        user.save((error) => {
+          if (error) {
+            return done(error);
           }
           done(null, user);
         });
