@@ -17,7 +17,7 @@ const profilesRouter = require("./routes/profiles.router");
 const config = require("config");
 const serverConfig = config.get("server");
 
-const port = serverConfig.port;
+const PORT = serverConfig.port;
 
 require("dotenv").config();
 
@@ -58,13 +58,13 @@ mongoose.set("strictQuery", false);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("mongodb connected");
+    console.log("MongoDB connected");
   })
   .catch((err) => {
     console.log(err);
   });
 
-app.use("/static", express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Routers
 app.use("/", mainRouter);
@@ -75,6 +75,6 @@ app.use("/posts/:id/likes", likesRouter);
 app.use("/friends", friendsRouter);
 app.use("/profile/:id", profilesRouter);
 
-app.listen(port, () => {
-  console.log(`Listening on ${port}`);
+app.listen(PORT, () => {
+  console.log(`Listening on PORT ${PORT}`);
 });
