@@ -4,17 +4,18 @@ const { default: mongoose } = require("mongoose");
 const passport = require("passport");
 const app = express();
 const path = require("path");
-
-//Routers
-const mainRouter = require("./routes/main.router");
-const usersRouter = require("./routes/users.router");
-const commentsRouter = require("./routes/comments.router");
-const friendsRouter = require("./routes/friends.router");
-const likesRouter = require("./routes/likes.router");
-const postsRouter = require("./routes/posts.router");
-const profilesRouter = require("./routes/profiles.router");
+const flash = require("connect-flash");
+const methodOverride = require("method-override");
 
 const config = require("config");
+const mainRouter = require("./routes/main.router");
+const usersRouter = require("./routes/users.router");
+const postsRouter = require("./routes/posts.router");
+const commentsRouter = require("./routes/comments.router");
+const profilesRouter = require("./routes/profiles.router");
+const likeRouter = require("./routes/likes.router");
+const friendsRouter = require("./routes/friends.router");
+
 const serverConfig = config.get("server");
 
 const PORT = serverConfig.port;
@@ -31,13 +32,13 @@ app.use(
 // register regenerate & save after the cookieSession middleware initialization
 app.use(function (request, response, next) {
   if (request.session && !request.session.regenerate) {
-    request.session.regenerate = (cb) => {
-      cb();
+    request.session.regenerate = (callback) => {
+      callback();
     };
   }
   if (request.session && !request.session.save) {
-    request.session.save = (cb) => {
-      cb();
+    request.session.save = (callback) => {
+      callback();
     };
   }
   next();
@@ -49,6 +50,9 @@ require("./config/passport");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(flash());
+app.use(methodOverride("_method"));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -66,15 +70,35 @@ mongoose
 
 app.use(express.static(path.join(__dirname, "public")));
 
-// Routers
+app.get("/send", (req, res) => {
+  req.flash("post success", "포스트가 생성되었습니다.");
+  res.redirect("/receive");
+});
+
+app.get("/receive", (req, res) => {
+  res.send(req.flash("post success")[0]);
+});
+
+app.use((req, res, next) => {
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
+  res.locals.currentUser = req.user;
+  next();
+});
+
 app.use("/", mainRouter);
 app.use("/auth", usersRouter);
 app.use("/posts", postsRouter);
 app.use("/posts/:id/comments", commentsRouter);
-app.use("/posts/:id/likes", likesRouter);
-app.use("/friends", friendsRouter);
 app.use("/profile/:id", profilesRouter);
+app.use("/friends", friendsRouter);
+app.use(likeRouter);
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.send(err.message || "Error Occurred");
+});
 
 app.listen(PORT, () => {
-  console.log(`Listening on PORT ${PORT}`);
+  console.log(`Listening on PORT: ${PORT}`);
 });

@@ -44,6 +44,7 @@ const localStrategyConfig = new LocalStrategy(
 );
 passport.use("local", localStrategyConfig);
 
+// Google Strategy
 const googleStrategyConfig = new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,

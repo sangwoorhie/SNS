@@ -80,13 +80,13 @@ userSchema.pre("save", function (next) {
   }
 });
 
-userSchema.methods.comparePassword = function (plainPassword, cb) {
+userSchema.methods.comparePassword = function (plainPassword, callback) {
   // bcrypt compare 비교
   // plain password  => client , this.password => 데이터베이스에 있는 비밀번호
 
   bcrypt.compare(plainPassword, this.password, function (error, isMatch) {
-    if (error) return cb(error);
-    cb(null, isMatch);
+    if (error) return callback(error);
+    callback(null, isMatch);
   });
 };
 
