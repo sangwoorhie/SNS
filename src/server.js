@@ -58,6 +58,7 @@ app.use(methodOverride("_method"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// mongoose 연결
 mongoose.set("strictQuery", false);
 mongoose
   .connect(process.env.MONGO_URI)

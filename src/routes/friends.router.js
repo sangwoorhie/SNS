@@ -91,7 +91,7 @@ friendsRouter.put(
           },
           (error, _) => {
             if (error) {
-              req.flash("error", "친구 추가하는데 실패했습니다.");
+              req.flash("error", "친구 추가에 실패했습니다.");
               res.redirect("back");
             } else {
               User.findByIdAndUpdate(
@@ -104,10 +104,10 @@ friendsRouter.put(
                 },
                 (error, _) => {
                   if (error) {
-                    req.flash("error", "친구 추가하는데 실패했습니다.");
+                    req.flash("error", "친구 추가에 실패했습니다.");
                     res.redirect("back");
                   } else {
-                    req.flash("success", "친구 추가를 성공했습니다.");
+                    req.flash("success", "친구 추가에 성공했습니다.");
                     res.redirect("back");
                   }
                 }
@@ -124,7 +124,7 @@ friendsRouter.put(
 friendsRouter.put("/:id/remove-friend", checkAuthenticated, (req, res) => {
   User.findById(req.params.id, (error, user) => {
     if (error || !user) {
-      req.flash("error", "유저를 찾는데 실패했습니다.");
+      req.flash("error", "유저 찾기에 실패했습니다.");
       res.redirect("back");
     } else {
       User.findByIdAndUpdate(
@@ -136,7 +136,7 @@ friendsRouter.put("/:id/remove-friend", checkAuthenticated, (req, res) => {
         },
         (error, _) => {
           if (error) {
-            req.flash("error", "친구 삭제하는데 실패했습니다.");
+            req.flash("error", "친구 삭제에 실패했습니다.");
             res.redirect("back");
           } else {
             User.findByIdAndUpdate(
@@ -148,9 +148,9 @@ friendsRouter.put("/:id/remove-friend", checkAuthenticated, (req, res) => {
               },
               (error, _) => {
                 if (error) {
-                  req.flash("error", "친구 삭제하는데 실패했습니다.");
+                  req.flash("error", "친구 삭제에 실패했습니다.");
                 } else {
-                  req.flash("success", "친구 삭제하는데 성공했습니다.");
+                  req.flash("success", "친구 삭제에 성공했습니다.");
                 }
                 res.redirect("back");
               }
